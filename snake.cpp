@@ -19,14 +19,15 @@ void gotoxy(int x, int y)
 class snakeController
 {
 	public:
-		int xPosition=1;
-		int yPosition=1;
+		int xPosition=25;
+		int yPosition=12;
 		int snakeLengt=1;
 		int xyDirection=2; //1=up, -1=down, 2=rigth, -2=left
 		int frameCounter=0;
 		int cGetch;
 		int boardTab[52][52]; //0=empty, 1=snake, 2=food, 3=border 
-		
+		bool isAlive=true;
+
 		void snakeDirection()
 		{
 			switch(cGetch=_getch())
@@ -34,63 +35,60 @@ class snakeController
 				case 72: //up arrow key
 					xyDirection=1;
 					break;
-					
+
 				case 80: //down arrow key
 					xyDirection=-1;
 					break;
-					
+
 				case 77: //rigth arrow key
 					xyDirection=2;
 					break;
-					
+
 				case 75: //left arrow key
 					xyDirection=-2;
 					break;
-					
+
 				default:
 					break;
-					
+
 			}
-			
+
 		}	
-		
-		void drawSnake(int x, int y, char ch)
+
+		void drawSnake(int x, int y)
 		{
 			gotoxy(xPosition, yPosition);
-			std::cout<<ch;
+			std::cout<<'.';
+			xPosition+=x;
+			yPosition+=y;
+			gotoxy(xPosition, yPosition);
+			std::cout<<'%';
+			
 		}
-		
+
 		void snakeMovement()
 		{
 			if(!frameCounter)
 			{
-				
+
 				switch(xyDirection)
 				{
 					case 1:
-						drawSnake(xPosition, yPosition, '.');
-						yPosition--;
-						drawSnake(xPosition, yPosition, '%');
+						drawSnake(0, -1);
 						break;
-					
+
 					case -1:
-						drawSnake(xPosition, yPosition, '.');
-						yPosition++;
-						drawSnake(xPosition, yPosition, '%');
+						drawSnake(0, 1);
 						break;
-						
+
 					case 2:
-						drawSnake(xPosition, yPosition, '.');
-						xPosition+=2;
-						drawSnake(xPosition, yPosition, '%');
+						drawSnake(2, 0);
 						break;
-						
+
 					case -2:
-						drawSnake(xPosition, yPosition, '.');
-						xPosition-=2;
-						drawSnake(xPosition, yPosition, '%');
+						drawSnake(-2, 0);
 						break;	
-						
+
 				}
 			}
 		}
@@ -99,11 +97,11 @@ class snakeController
 void drawBoard()
 {
 	snakeController snakeObj;
-	
+
 	for(int i=0; i<52; i++)
 		std::cout<<'~';
 	std::cout<<std::endl;
-		
+
 	for(int i=0; i<25; i++)
 	{
 		std::cout<<'~';
@@ -118,28 +116,28 @@ void drawBoard()
 		for(int i=0; i<52; i++)
 		std::cout<<'~';
 }
-		
+
 
 int main()
 {
 	snakeController snakeObj;
 	drawBoard();
-	
-	while(true)
+
+	while(snakeObj.isAlive)
 	{
 		if(snakeObj.frameCounter<3)
 			snakeObj.frameCounter++;
 		else
 			snakeObj.frameCounter=0;
-			
+
 		if(kbhit())
 			{
 			snakeObj.cGetch=_getch();
 			snakeObj.snakeDirection();
 			}
-		
+
 		snakeObj.snakeMovement();
-		
+
 		usleep(1000*62);
 	}
 }
